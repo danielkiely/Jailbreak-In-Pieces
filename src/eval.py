@@ -26,3 +26,7 @@ image_files = len(JB_pieces_prompts) * ["../outputs/L2_noNorm_clipgrad_email_336
 
 
 Jailbroken_answers = batch_generate_response(JB_pieces_prompts, model, processor, device, new_tokens=100, images=image_files)
+
+print('outputting responses...')
+for answer in Jailbroken_answers:
+    print(answer)
