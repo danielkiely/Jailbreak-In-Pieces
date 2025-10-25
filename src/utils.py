@@ -74,7 +74,12 @@ def batch_generate_response(prompts, model, processor, device, new_tokens=100, i
     
     else:
         raw_images = [Image.open(img).resize((3100,1438)) for img in images]
-        batch = processor(prompts, raw_images, return_tensors='pt', padding = True).to(device, torch.float16)
+        batch = processor(
+            text=prompts,
+            images=raw_images,
+            return_tensors='pt',
+            padding=True
+        ).to(device, torch.float16)
         len_prompt = batch['input_ids'].shape[1]
         # with torch.cuda.amp.autocast(): # interesting! for batch generation, this led to errors! so I commented it out!
         with torch.no_grad():
