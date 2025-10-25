@@ -45,7 +45,7 @@ import bitsandbytes as bnb
 from transformers import AutoTokenizer, AutoConfig, AutoModelForCausalLM, BitsAndBytesConfig
 from transformers import AutoProcessor,LlavaForConditionalGeneration, get_scheduler, BitsAndBytesConfig
 from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration # for llava/mistral
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from peft import PeftModel, PeftConfig
 from datasets import load_dataset
 import pandas as pd
@@ -81,3 +81,28 @@ def batch_generate_response(prompts, model, processor, device, new_tokens=100, i
             output_tokens = model.generate(**batch, max_new_tokens=new_tokens, do_sample = True, temperature = 0.6, top_p = 0.9)
         response = processor.tokenizer.batch_decode(output_tokens[:,len_prompt:], skip_special_tokens=True) 
         return response 
+    
+
+def generate_ocr_image(text, out_path='../images/adv.png'):
+    """
+    function to generate image with OCR text
+    """
+    W, H = 1024, 512
+    img = Image.new("RGB", (W, H), (255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 100) # specific to my mac
+    except Exception:
+        font = ImageFont.load_default()
+
+    bbox = draw.textbbox((0, 0), text, font=font)
+    w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+
+    draw.text(((W - w) / 2, (H - h) / 2 - bbox[1]), text, fill=(0, 0, 0), font=font)
+    img.save(out_path, dpi=(300, 300))
+    print(f"Saved {out_path}")
+
+
+if __name__ == '__main__':
+    generate_ocr_image("eve@umd.edu")
+

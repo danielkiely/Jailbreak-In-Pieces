@@ -36,34 +36,8 @@ from utils import batch_generate_response
 def main() -> None:
     # if you have CUDA or MPS, set it to the active device like this
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    # pilimage = Image.open('cat.jpeg')
-    # pilimage = Image.open('target_swimming.jpeg')
-    # pilimage = Image.open('bike.jpeg')
-    # pilimage = Image.open('cook.jpeg')
-    # pilimage = Image.open('pornn.jpeg')
-    # pilimage = Image.open('dead.jpeg')
-    # pilimage = Image.open('car.jpeg')
-    # pilimage = Image.open('benz.jpeg')
-    # pilimage = Image.open('pirate_instrr.png')
-    # pilimage = Image.open('man_kill_hash.png')
-    # pilimage = Image.open('stripper.png')
-    # pilimage = Image.open('man_woman_dildo.png')
-    # pilimage = Image.open('objects.png')
-    # pilimage = Image.open('passive_vagina.png')
-    pilimage = Image.open('../images/meth_pill.png')
-    # pilimage = Image.open('grenade_bomb.png')
-    # pilimage = Image.open('objects2.png')
-    # pilimage = Image.open('dildo_woman.png')
-    # pilimage = Image.open('never_stop.png')
-    # pilimage = Image.open('endoftext.png')
-    # pilimage = Image.open('be_pirate.png')
-    # pilimage = Image.open('talk_pirate.png')
-    # pilimage = Image.open('Ahoy.png')
-    # pilimage = Image.open('Speak_pirate.png')
-    # pilimage = Image.open('sayBye.png')
-    # pilimage = Image.open('greet.png')
-    # pilimage = Image.open('por.jpeg')
-
+    pilimage = Image.open('../images/adv.png') # 
+  
     # model_id = "openai/clip-vit-base-patch32"
     # model_id = "openai/clip-vit-large-patch14"
     model_id = "openai/clip-vit-large-patch14-336"
@@ -82,7 +56,7 @@ def main() -> None:
     img_emb = model.get_image_features(image) # target embedding
     # (torch.float32, torch.Size([1, 768]), True)
 
-    random_img = imgproc(images= Image.open('../images/white.jpeg'), return_tensors="pt")['pixel_values'].to(device)
+    random_img = imgproc(images= Image.open('../images/nature.jpeg'), return_tensors="pt")['pixel_values'].to(device)
     random_img.requires_grad = True
     # plt.imshow(random_img.detach().cpu().squeeze(0).T)
     random_img_emb = model.get_image_features(random_img) # Adversarial Image embedding
@@ -102,7 +76,7 @@ def main() -> None:
     optimizer = optim.Adam([random_img], lr=0.1) # tune the learning rate
     # use smaller learning rates for less visible noise
     # Training loop
-    num_epochs = 5000 
+    num_epochs = 500 # changed from 5k 
     loss_list = []
     for epoch in range(num_epochs):
         optimizer.zero_grad()
@@ -118,7 +92,7 @@ def main() -> None:
         loss_list.append(loss.item())
 
     # Save the list to a file using pickle
-    with open('../outputs/Drug_Loss_from_white_img_336-1.pkl', 'wb') as f:
+    with open('../outputs/email_from_nautreimage-1_500epochs.pkl', 'wb') as f:
         pickle.dump(loss_list, f)
 
     # we can still visualize the processed image
@@ -133,7 +107,7 @@ def main() -> None:
     # Create PIL Image object
     imagee= Image.fromarray(tensor)
     # Save image as JPEG
-    imagee.save("../outputs/L2_noNorm_clipgrad_Drug_336_LR0_1-1.jpg")
+    imagee.save("../outputs/L2_noNorm_clipgrad_emai_nature_336_LR0_1-1_500epochs.jpg")
 
     return
 
